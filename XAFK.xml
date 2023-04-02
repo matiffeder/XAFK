@@ -1,0 +1,342 @@
+<Ui xmlns="http://www.runewaker.com/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="../../worldxml/ui.xsd"> 
+	<CheckButton name="XAFKCheckTemp" inherits="UIPanelCheckButtonTemplate" virtual="true">
+		<Size><AbsDimension x="24" y="24"/></Size>
+		<Layers>
+			<Layer>
+				<FontString name="$parent_Name" inherits="QuestTitleFont">
+					<Anchors><Anchor point="LEFT" relativePoint="RIGHT"/></Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</CheckButton>
+	<EditBox name="XAFKTimerTemp" inherits="UIPanelEditBoxTemplate" letters="6" numeric="true" virtual="true">
+		<Size><AbsDimension x="60" y="18"/></Size>
+		<Layers>
+			<Layer>
+				<FontString name="$parent_Name" inherits="QuestTitleFont">
+					<Anchors><Anchor point="LEFT" relativePoint="RIGHT"/></Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</EditBox>
+	<EditBox name="XAFKMsgTemp" inherits="UIPanelEditBoxTemplate" virtual="true">
+		<Size><AbsDimension x="555" y="18"/></Size>
+		<Layers>
+			<Layer>
+				<FontString name="$parent_Name" inherits="QuestTitleFont">
+					<Anchors><Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"/></Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</EditBox>
+	<Frame name="XAFKFrame" parent="UIParent" hidden="true">
+		<Scripts>
+			<OnLoad>XAFK.OnLoad(this)</OnLoad>
+			<OnEvent>XAFK.OnEvent(this, event)</OnEvent>
+			<OnUpdate>XAFK.OnUpdate(elapsedTime)</OnUpdate>
+		</Scripts>
+	</Frame>
+	<Frame name="XAFKMode" parent="UIParent" enableMouse="true" hidden="true">
+		<Size><AbsDimension x="128" y="64"/></Size>
+		<Anchors><Anchor point="TOPLEFT"/></Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\ActionBarFrame\ExtraActionBar_Backdrop"/>
+				<FontString name="$parent_Text" inherits="GameFontNormal">
+					<Anchors><Anchor point="CENTER"/></Anchors>
+					<FontHeight><AbsValue val="23"/></FontHeight>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parent_Close" inherits="UIPanelCloseButtonTemplate">
+				<Size><AbsDimension x="16" y="16"/></Size>
+				<Anchors><Anchor point="TOPRIGHT"><Offset><AbsDimension x="-32" y="-5"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnClick>XAFK.Toggle(true)</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_TOP")
+						GameTooltip:SetText(C_CLOSE)
+					</OnEnter>
+				</Scripts>
+			</Button>
+			<Button name="$parent_Status" inherits="UIPanelButtonTemplate">
+				<Size><AbsDimension x="16" y="16"/></Size>
+				<NormalTexture file="interface\CharacterFrame\EquipSwapButton-Normal"/>
+				<PushedTexture file="interface\CharacterFrame\EquipSwapButton-Depress"/>
+				<HighlightTexture file="Interface\Buttons\PanelSmallButtonHighlight" alphaMode="ADD"/>
+				<Anchors><Anchor point="TOPRIGHT"><Offset><AbsDimension x="-47" y="-5"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnClick>XAFK.Toggle()</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_TOP")
+						GameTooltip:SetText("AFK/DND")
+					</OnEnter>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnEnter>XAFK.ModeTip(this)</OnEnter>
+			<OnLeave>GameTooltip:Hide()</OnLeave>
+			<OnMouseDown>XAFK.ModeDown(this, key)</OnMouseDown>
+			<OnMouseUp>
+				this:StopMovingOrSizing()
+				_, _, _, XAFKSet["Mode_X"], XAFKSet["Mode_Y"] = this:GetAnchor()
+			</OnMouseUp>
+			<OnClick>ToggleUIFrame(XAFKMsg)</OnClick>
+		</Scripts>
+	</Frame>
+	<Frame name="XAFKMsg" parent="UIParent" enableMouse="true" hidden="true" frameLevel="2">
+		<Size><AbsDimension x="312" y="312"/></Size>
+		<Anchors><Anchor point="RIGHT"/></Anchors>
+		<Backdrop bgFile="Interface\Tooltips\Tooltip-Background" edgeFile="Interface\Tooltips\Tooltip-border" tile="true">
+			<BackgroundInsets><AbsInset top="4" left="4" bottom="4" right="4"/></BackgroundInsets>
+			<EdgeSize><AbsValue val="16"/></EdgeSize>
+			<TileSize><AbsValue val="16"/></TileSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parent_Left" file="Interface\Common\UIPanel-TabBottom-Active">
+					<Size><AbsDimension x="16" y="32"/></Size>
+					<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="1" y="5"/></Offset></Anchor></Anchors>
+					<TexCoords left="0" right="0.25" top="0" bottom="1"/>
+				</Texture>
+				<Texture name="$parent_Right" file="Interface\Common\UIPanel-TabBottom-Active">
+					<Size><AbsDimension x="16" y="32"/></Size>
+					<Anchors><Anchor point="TOPRIGHT"><Offset><AbsDimension x="-1" y="5"/></Offset></Anchor></Anchors>
+					<TexCoords left="0.75" right="1" top="0" bottom="1"/>
+				</Texture>
+				<Texture file="Interface\Common\UIPanel-TabBottom-Active">
+					<Size><AbsDimension x="32" y="32"/></Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parent_Left" relativePoint="RIGHT"/>
+						<Anchor point="RIGHT" relativeTo="$parent_Right" relativePoint="LEFT"/>
+					</Anchors>
+					<TexCoords left="0.25" right="0.75" top="0" bottom="1"/>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Title" inherits="GameFontNormal">
+					<Anchors><Anchor point="TOP"><Offset><AbsDimension x="0" y="8"/></Offset></Anchor></Anchors>
+					<FontHeight><AbsValue val="20"/></FontHeight>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parent_Close" inherits="UIPanelCloseButtonTemplate">
+				<Anchors><Anchor point="TOPRIGHT"><Offset><AbsDimension x="-7" y="6"/></Offset></Anchor></Anchors>
+				<Size><AbsDimension x="22" y="22"/></Size>
+			</Button>
+			<MessageFrame name="$parent_Frame" enableMouse="true" displayDuration="0" maxLines="100">
+				<Size><AbsDimension x="290" y="276"/></Size>
+				<Anchors><Anchor point="TOP"><Offset><AbsDimension x="-2" y="38"/></Offset></Anchor></Anchors>
+				<FontString inherits="GameFontNormal" justifyH="LEFT" justifyV="BOTTOM"/>
+				<Frames>
+					<Slider name="$parentScrollBar">
+						<Size><AbsDimension x="12" y="276"/></Size>
+						<Anchors><Anchor point="RIGHT"><Offset><AbsDimension x="10" y="-6"/></Offset></Anchor></Anchors>
+						<Scripts>
+							<OnLoad>this:SetValueStepMode("INT")</OnLoad>
+							<OnValueChanged>this:GetParent():SetPosition(this:GetValue())</OnValueChanged>
+						</Scripts>
+						<ThumbTexture file="Interface\ChatFrame\ChatFrame-ScrollBar-Knob">
+							<Size><AbsDimension x="12" y="12"/></Size>
+						</ThumbTexture>
+					</Slider>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						this:RegisterForClicks("LeftButton", "RightButton")
+						this:SetLineBytes(2048)
+						this:EnableHyperlink(true)
+					</OnLoad>
+					<OnShow>XAFKMsg_Title:SetText(XAFK.Lang["RecMsg"])</OnShow>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_LEFT", -10, -10)
+						GameTooltip:SetText("- "..XAFK.Lang["Tip4"].."\n- "..XAFK.Lang["Tip5"].."\n- "..TIMEKEEPER_TOOLTIP, 0, .7, .9)
+					</OnEnter>
+					<OnLeave>GameTooltip:Hide()</OnLeave>
+					<OnHyperlinkClick>ChatFrame_OnHyperlinkClick(this, link, key)</OnHyperlinkClick>
+					<OnMouseWheel>XAFK.MsgScroll(this, delta)</OnMouseWheel>
+					<OnDragStart>XAFKMsg:StartMoving()</OnDragStart>
+					<OnDragStop>XAFKMsg:StopMovingOrSizing()</OnDragStop>
+					<OnValueChanged>FloatingChatFrameScrollBar_Update(this)</OnValueChanged>
+				</Scripts>
+			</MessageFrame>
+		</Frames>
+		<Scripts>
+			<OnDragStart>this:StartMoving()</OnDragStart>
+			<OnDragStop>this:StopMovingOrSizing()</OnDragStop>
+		</Scripts>
+	</Frame>
+	<Frame name="XAFKGUI" parent="UIParent" hidden="true" enableMouse="true" frameLevel="1">
+		<Size><AbsDimension x="612" y="503"/></Size>
+		<Anchors><Anchor point="CENTER"/></Anchors>
+		<Backdrop edgeFile="Interface\Tooltips\Tooltip-Border" bgFile="Interface\Tooltips\Tooltip-Background">
+			<BackgroundInsets><AbsInset top="4" left="4" bottom="4" right="4"/></BackgroundInsets>
+			<EdgeSize><AbsValue val="16"/></EdgeSize>
+			<TileSize><AbsValue val="16"/></TileSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parent_Version" inherits="Font_FrameTitle">
+					<Anchors><Anchor point="TOP"><Offset><AbsDimension x="0" y="10"/></Offset></Anchor></Anchors>
+				</FontString>
+				<FontString name="$parent_Send" inherits="GameFontHighlight">
+					<Anchors><Anchor point="BOTTOMRIGHT"><Offset><AbsDimension x="-557" y="-174"/></Offset></Anchor></Anchors>
+				</FontString>
+				<FontString name="$parent_Rec" inherits="GameFontHighlight">
+					<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="70" y="317"/></Offset></Anchor></Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="$parent_Close" inherits="UIPanelButtonTemplate" text="CLOSE">
+				<Size><AbsDimension x="110" y="30"/></Size>
+				<Anchors><Anchor point="BOTTOMRIGHT"><Offset><AbsDimension x="-7" y="-6"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnClick>XAFK.GUIClose(this)</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parent_Save" inherits="UIPanelButtonTemplate" text="OBJ_SAVE">
+				<Size><AbsDimension x="110" y="30"/></Size>
+				<Anchors><Anchor point="BOTTOMRIGHT"><Offset><AbsDimension x="-120" y="-6"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnClick>XAFK.Save()</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parent_RecMsg" inherits="UIPanelButtonTemplate">
+				<NormalTexture file="Interface\CraftFrame\OpenQueueFrame_Normal"/>
+				<PushedTexture file="Interface\CraftFrame\OpenQueueFrame_Depress"/>
+				<HighlightTexture file="Interface\Buttons\PanelSmallButtonHighlight" alphaMode="ADD"/>
+				<Size><AbsDimension x="24" y="24"/></Size>
+				<Anchors><Anchor point="BOTTOMRIGHT"><Offset><AbsDimension x="-238" y="-10"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnClick>ToggleUIFrame(XAFKMsg)</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_TOP")
+						GameTooltip:SetText(XAFK.Lang["RecMsg"])
+					</OnEnter>
+				</Scripts>
+			</Button>
+			<Button name="$parent_Clear" inherits="UIPanelButtonTemplate">
+				<NormalTexture file="Interface\BagFrame\GarbageCan-Normal"/>
+				<PushedTexture file="Interface\BagFrame\GarbageCan-Depress"/>
+				<HighlightTexture file="Interface\Buttons\PanelSmallButtonHighlight" alphaMode="ADD"/>
+				<Size><AbsDimension x="24" y="24"/></Size>
+				<Anchors><Anchor point="BOTTOMRIGHT"><Offset><AbsDimension x="-270" y="-10"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnClick>XAFK.Clear()</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_TOP")
+						GameTooltip:SetText(XAFK.Lang["Clear"])
+					</OnEnter>
+				</Scripts>
+			</Button>
+			<RadioButton name="$parent_Status1" inherits="UIPanelRadioButtonTemplate">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="18" y="28"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnClick>XAFK.Status(1)</OnClick>
+				</Scripts>
+			</RadioButton>
+			<RadioButton name="$parent_Status2" inherits="UIPanelRadioButtonTemplate">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="18" y="74"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnClick>XAFK.Status(2)</OnClick>
+				</Scripts>
+			</RadioButton>
+			<RadioButton name="$parent_Status0" inherits="UIPanelRadioButtonTemplate">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="18" y="120"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnClick>XAFK.Status(0)</OnClick>
+				</Scripts>
+			</RadioButton>
+			<EditBox name="$parent_Send1" inherits="XAFKMsgTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="37" y="43"/></Offset></Anchor></Anchors>
+			</EditBox>
+			<EditBox name="$parent_Send2" inherits="XAFKMsgTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="37" y="89"/></Offset></Anchor></Anchors>
+			</EditBox>
+			<EditBox name="$parent_Send0" inherits="XAFKMsgTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="37" y="135"/></Offset></Anchor></Anchors>
+			</EditBox>
+			<CheckButton name="$parent_Auto1" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="15" y="165"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<EditBox name="$parent_Timer1" inherits="XAFKTimerTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="210" y="168"/></Offset></Anchor></Anchors>
+			</EditBox>
+			<CheckButton name="$parent_Auto2" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="15" y="188"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<EditBox name="$parent_Timer2" inherits="XAFKTimerTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="410" y="191"/></Offset></Anchor></Anchors>
+			</EditBox>
+			<CheckButton name="$parent_WhReply" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="15" y="211"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<CheckButton name="$parent_WhRec" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="15" y="234"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<CheckButton name="$parent_SaveMode" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="15" y="257"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<CheckButton name="$parent_SaveMsg" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="15" y="280"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<CheckButton name="$parent_SAY" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="65" y="330"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<CheckButton name="$parent_GUILD" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="65" y="353"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<CheckButton name="$parent_PARTY" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="65" y="376"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<CheckButton name="$parent_SAY2" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="35" y="330"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<CheckButton name="$parent_GUILD2" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="35" y="353"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<CheckButton name="$parent_PARTY2" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="35" y="376"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<CheckButton name="$parent_ZONE" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="65" y="399"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<CheckButton name="$parent_YELL" inherits="XAFKCheckTemp">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="65" y="422"/></Offset></Anchor></Anchors>
+			</CheckButton>
+			<Frame name="$parent_PChSend" inherits="UIDropDownMenuTemplate">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="200" y="317"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnShow>XAFK.PChMenuShow(this, "Send")</OnShow>
+				</Scripts>
+			</Frame>
+			<Frame name="$parent_PChRec" inherits="UIDropDownMenuTemplate">
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="200" y="352"/></Offset></Anchor></Anchors>
+				<Scripts>
+					<OnShow>XAFK.PChMenuShow(this, "Rec")</OnShow>
+				</Scripts>
+			</Frame>
+			<EditBox name="$parent_Keyword" inherits="XAFKMsgTemp">
+				<Size><AbsDimension x="218" y="18"/></Size>
+				<Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="202" y="402"/></Offset></Anchor></Anchors>
+			</EditBox>
+		</Frames>
+		<Scripts>
+			<OnShow>XAFK.GUIShow(this)</OnShow>
+			<OnDragStart>
+				if not XBARVERSION then
+					this:StartMoving()
+				end
+			</OnDragStart>
+			<OnDragStop>
+				if not XBARVERSION then
+					this:StopMovingOrSizing()
+				end
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+</Ui>
